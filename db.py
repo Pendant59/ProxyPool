@@ -1,8 +1,12 @@
 import redis
 import random
-from functions import setLog
+from functions import set_log
 from config import *
-from retrying import retry
+try:
+	from retrying import retry
+except Exception as e:
+	print('retrying module is not avaliable.')
+
 
 class RedisClient():
 	'''
@@ -17,7 +21,7 @@ class RedisClient():
 				pool = redis.ConnectionPool(host=HOST, password=PASSWORD,port=PORT, db=DB)
 			self._db = redis.Redis(connection_pool=pool)
 		except Exception as e:
-			setLog(e,'error')
+			set_log(e, 'error', '__init__')
 			print('Redis Content is error. Please check the ErrorLog.')
 			exit()
 
@@ -31,7 +35,7 @@ class RedisClient():
 			proxy = self._db.rpop('proxy').decode('utf-8')
 			return proxy
 		except Exception as e:
-			setLog(e,'error')
+			set_log(e, 'error', 'getOnceProxy')
 			print('Get a disposable proxy is error. Please check the ErrorLog.')
 			exit()
 
@@ -45,7 +49,7 @@ class RedisClient():
 			proxy = self._db.lindex('proxy', random.randint(0, self.getProxyLength-1)).decode('utf-8')
 			return proxy
 		except Exception as e:
-			setLog(e,'error')
+			set_log(e, 'error', 'getProxy')
 			print('Get proxy - used without deletion is error. Please check the ErrorLog.')
 			exit()
 
