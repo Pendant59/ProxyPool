@@ -45,6 +45,9 @@ class RedisClient():
 		获取代理 - 用过不删除
 		Get proxy - used without deletion
 		'''
+		if self.getProxyLength == 0:
+			return None
+
 		try:
 			proxy = self._db.lindex('proxy', random.randint(0, self.getProxyLength-1)).decode('utf-8')
 			return proxy
@@ -58,6 +61,9 @@ class RedisClient():
 		获取需要校验的代理列表
 		Get the list of proxys that need to be checked
 		'''
+		if self.getProxyLength == 0:
+			return None
+
 		proxies_list = self._db.lrange('proxy', 0, self.getProxyLength // 2)
 		return proxies_list
 
