@@ -1,6 +1,9 @@
 import requests
+import random
 from functions import set_log
 from pyquery import PyQuery as pq
+from db import RedisClient
+from config import HEADERS_LIST
 
 
 class GetProxiesDataMetaClass(type):
@@ -27,12 +30,38 @@ class GetProxiesDataMetaClass(type):
 
 class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 	"""Get proxies from webserver"""
+	def __init__(self):
+		redis = RedisClient()
+		self._proxy = redis.getProxy()
 
-	def get_proxy_xici():
-		pass
+	def get_proxy_xici(self):
+		
+		url = 'http://www.xicidaili.com/nn/'
+		link = requests.Session()
+		header = {
+			'User-Agent': random.choice(HEADERS_LIST)
+		}
+		try:
+			if not self._proxy:
+				res = link.get(url, headers=header, timeout=0.001)
+			else:
+				res = link.get(url, proxies=self._proxy, headers=header, timeout=4)
+			if res.status_code == requests.codes.ok:
+				print('success')
+		except Exception as e:
+			set_log('西刺代理，请求超时', 'proxy')
+		finally:
+			return None
+		
+		
+		
 
-	def get_proxy_goubanjia():
+			
+
+	def get_proxy_goubanjia(self):
 		pass
 	
 
 
+if __name__ == '__main__':
+	GetProxiesData().get_proxy_xici()
