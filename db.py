@@ -2,11 +2,6 @@ import redis
 import random
 from functions import set_log
 from config import *
-try:
-	from retrying import retry
-except Exception as e:
-	print('retrying module is not avaliable.')
-
 
 class RedisClient():
 	'''
@@ -21,30 +16,34 @@ class RedisClient():
 				pool = redis.ConnectionPool(host=HOST, password=PASSWORD,port=PORT, db=DB)
 			self._db = redis.Redis(connection_pool=pool)
 		except Exception as e:
-			set_log(e, 'error', '__init__')
-			print('Redis Content is error. Please check the ErrorLog.')
+			set_log('error').debug('Redis Content is error. Please check the ErrorLog.')
+			# print('Redis Content is error. Please check the ErrorLog.')
 			exit()
 
-	@retry(stop_max_attempt_number=5, wait_fixed=4000)
+	
 	def getOnceProxy(self):
 		'''
 		获取一次性代理 - 用过删除
 		Get a disposable proxy
 		'''
+		# 当前没有代理
+		if self.getProxyLength == 0:
+			return None
+
 		try:
 			proxy = self._db.rpop('proxy').decode('utf-8')
 			return proxy
 		except Exception as e:
-			set_log(e, 'error', 'getOnceProxy')
-			print('Get a disposable proxy is error. Please check the ErrorLog.')
+			set_log('error').debug('Get a disposable proxy is error. Please check the ErrorLog.')
+			# print('Get a disposable proxy is error. Please check the ErrorLog.')
 			exit()
 
-	@retry(stop_max_attempt_number=5, wait_fixed=4000)
 	def getProxy(self):
 		'''
 		获取代理 - 用过不删除
 		Get proxy - used without deletion
 		'''
+		# 当前没有代理
 		if self.getProxyLength == 0:
 			return None
 
@@ -52,8 +51,8 @@ class RedisClient():
 			proxy = self._db.lindex('proxy', random.randint(0, self.getProxyLength-1)).decode('utf-8')
 			return proxy
 		except Exception as e:
-			set_log(e, 'error', 'getProxy')
-			print('Get proxy - used without deletion is error. Please check the ErrorLog.')
+			set_log('error').debug('Get proxy whitch is used without deletion is error. Please check the ErrorLog.')
+			# print('Get proxy whitch is used without deletion is error. Please check the ErrorLog.')
 			exit()
 
 	def validateProxiesList(self):
@@ -61,9 +60,6 @@ class RedisClient():
 		获取需要校验的代理列表
 		Get the list of proxys that need to be checked
 		'''
-		if self.getProxyLength == 0:
-			return None
-
 		proxies_list = self._db.lrange('proxy', 0, self.getProxyLength // 2)
 		return proxies_list
 
@@ -97,7 +93,7 @@ if __name__ == '__main__':
     	proxy = redis.getProxy()
     else:
     	proxy = redis.getOnceProxy()
-    print(proxy)
+    print(proxy)   # getOnceProxy()
 
 
 			
