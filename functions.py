@@ -1,8 +1,32 @@
 import time
 import logging
 import logging.handlers
+from config import HEADERS_LIST,GET_PROXY_TYPE
+import random
+import requests
 
+def get_html(url,proxy,**options):
+   
+    header = {
+        'User-Agent': random.choice(HEADERS_LIST),
+        'Accept-Encoding': 'gzip, deflate, sdch',
+        'Accept-Language': 'zh-CN,zh;q=0.8'
+    }
 
+    headers = dict(header, **options)
+ 
+    print('Getting', url)
+    link = requests.Session()
+    try:
+        r = link.get(url, headers=headers,proxies={'http':'http://115.46.69.82:8223'},timeout=4)
+        print('Getting result', url, r.status_code)
+        if r.status_code == 200:
+            return r.text
+    except ConnectionError:
+        print('Crawling Failed', url)
+        return None
+    except requests.exceptions.ProxyError:
+        print('errrrrr')
 
 
 
