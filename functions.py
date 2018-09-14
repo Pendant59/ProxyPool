@@ -5,7 +5,14 @@ from config import HEADERS_LIST,GET_PROXY_TYPE
 import random
 import requests
 
-def get_html(url,proxy,**options):
+def get_html(url,proxy,retry=False,**options):
+    '''
+    获取url的html代码
+    url: 目标url
+    proxy: 代理ip
+    retry: 是否是重试请求
+    options: header头其他参数
+    '''
    
     header = {
         'User-Agent': random.choice(HEADERS_LIST),
@@ -15,19 +22,21 @@ def get_html(url,proxy,**options):
 
     headers = dict(header, **options)
  
-    print('Getting', url)
     link = requests.Session()
-    try:
-        r = link.get(url, headers=headers,proxies={'http':'http://115.46.69.82:8223'},timeout=4)
-        print('Getting result', url, r.status_code)
-        if r.status_code == 200:
-            return r.text
-    except ConnectionError:
-        print('Crawling Failed', url)
-        return None
-    except requests.exceptions.ProxyError:
-        print('errrrrr')
+    link.headers["Connection"] = 'close'
 
+    try:
+        if proxy:
+            r = link.get(url, headers=headers, proxies=proxy, timeout=4, verify=False)
+        else:
+            r = link.get(url, headers=headers, timeout=4, verify=False)
+        print('Get proxy from', url, r.status_code)
+        if r.status_code == requests.codes.ok:
+            return r.text
+    except Exception as e:
+        if not retry:
+            set_log_zh('request_proxy').debug('{}\r\n{}'.format(url,e))
+  
 
 
 def set_log(logname='', openmethod='a+'):
@@ -42,7 +51,7 @@ def set_log(logname='', openmethod='a+'):
     dateFormat = "%H:%M:%S %Y-%d-%m %p"
     # 内容格式
     contentFormat = '\r\n [ %(asctime)s ] -%(pathname)s- [ line:%(lineno)d ] -- %(levelname)s -- '
-    contentFormat += '\r\n =|= %(message)s =|='
+    contentFormat += '\r\n=|=\r\n %(message)s \r\n=|='
     # 一次性基础配置
     logging.basicConfig(level=logging.DEBUG,  
                     format= contentFormat,
@@ -72,7 +81,7 @@ def set_log_zh(logname='', openmethod='a+'):
     dateFormat = "%H:%M:%S %Y-%d-%m %p"
     # 内容格式
     contentFormat = '\r\n [ %(asctime)s ] -%(pathname)s- [ line:%(lineno)d ] -- %(levelname)s -- '
-    contentFormat += '\r\n =|= %(message)s =|='
+    contentFormat += '\r\n=|=\r\n %(message)s \r\n=|='
 
     # 1.创建 logger对象(记录器)：负责产生日志
     logger = logging.getLogger('zh') #获得一个logger对象，默认是root
@@ -120,7 +129,7 @@ def set_log_zh_bytime(logname=''):
     
      # 内容格式
     contentFormat = '\r\n [ %(asctime)s ] -%(pathname)s- [ line:%(lineno)d ] -- %(levelname)s -- '
-    contentFormat += '\r\n =|= %(message)s =|='
+    contentFormat += '\r\n=|=\r\n %(message)s \r\n=|='
     # 日期格式
     dateFormat = "%H:%M:%S %Y-%d-%m %p"
 
@@ -146,4 +155,5 @@ def set_log_zh_bytime(logname=''):
 
 
 if __name__ == '__main__':
-    set_log_zh('zh').debug('pendant')
+    pass
+    # set_log_zh('zh').debug('pendant')
