@@ -1,7 +1,7 @@
 import redis
 import random
 from functions import set_log
-from config import *
+from config import HOST,PORT,PASSWORD,DB,GET_PROXY_TYPE
 
 class RedisClient():
 	'''
