@@ -2,7 +2,8 @@ import random
 from functions import *
 from pyquery import PyQuery as pq
 from db import RedisClient
-
+import json
+import re
 
 class GetProxiesDataMetaClass(type):
 	'''
@@ -28,25 +29,162 @@ class GetProxiesDataMetaClass(type):
 
 class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 	"""Get proxies from webserver"""
-	def __init__(self):
-		pass
 
 	def get_proxy_xici(self):
+		'''获取西刺代理ip'''
+
 		url = 'http://www.xicidaili.com/nn/'
+		# url = 'http://www.google.com'
 		db = RedisClient()
+		# 获取一条代理
 		proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
-		get_html(url,proxy,pragma='no-cache')
+		html = get_html(url, proxy)
+		# 失败重试
+		attemp = 1 
+		while html is None and attemp <3:
+			attemp+=1
+			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+			html = get_html(url, proxy, True)
+			if html:
+				break
+		# 解析 Html 结构
+		if html:
+			# 返回列表
+			proxies = list()
+			doc = pq(html)
+			try:
+				trList = doc('#ip_list tr:gt(0)')
+				for x in trList.items():
+					delay = x.find('td').eq(6).find("div").attr('title')[0]
+					if int(delay) > 0 :
+						continue
+					ip = x.find('td').eq(1).text()
+					port = x.find('td').eq(2).text()
+					agreement = x.find('td').eq(5).text().lower()
 
-		
-		
-		
+					proxies.append(json.dumps({agreement:agreement+'://'+ip+':'+port}))
+				# print(proxies)
+				return proxies
+			except Exception as e:
+				set_log('analysis_proxy_xici').debug(e)
+				return None
 
-			
 
 	def get_proxy_goubanjia(self):
-		pass
+		'''获取goubanjia代理ip'''
+
+		url = 'http://www.goubanjia.com/'
+		# url = 'http://www.google.com'
+		db = RedisClient()
+		# 获取一条代理
+		proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+		html = get_html(url, proxy)
+		# 失败重试
+		attemp = 1 
+		while html is None and attemp < 3:
+			attemp+=1
+			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+			html = get_html(url, proxy, True)
+			if html:
+				break
+		# 解析 Html 结构
+		if html:
+			# 返回列表
+			proxies = list()
+			doc = pq(html)
+			try:
+				trList=doc(".table.table-hover tr:gt(0)")
+				# 全部tr
+				for i in trList.items():
+					# 存放ip数据
+					ipList =[]
+					# 包含ip
+					for v in i.find('.ip').children().items():
+						if v.attr('style') != 'display: none;' and v.attr('style') != 'display:none;' and v.text() is not '':
+							ipList.append(v.text())
+					ip =''.join(ipList[:-1])
+					port = ipList[-1]
+					agreement = i.find('td').eq(2).text()
+
+					proxies.append(json.dumps({agreement:agreement+'://'+ip+':'+port}))
+				# print(proxies)
+				return proxies
+			except Exception as e:
+				set_log_zh('analysis_proxy_goubanjia').debug(e)
+				return None
+
+	def get_proxy_kuaidaili(self):
+		'''获取快代理ip'''
+		db = RedisClient()
+		# 返回列表
+		proxies = list()
+
+		#抓取三页
+		for page in range(1,4):
+			# 首页限制 加1秒休眠
+			time.sleep(1)
+			url = 'https://www.kuaidaili.com/free/inha/'+str(page)
+			# 获取一条代理
+			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+			html = get_html(url, proxy)
+			# 失败重试
+			attemp = 1
+			while html is None and attemp < 3:
+				attemp+=1
+				proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+				html = get_html(url, proxy, True)
+				if html:
+					break
+			# 解析 Html 结构
+			if html:
+				
+				doc = pq(html)
+				trList = doc('#list table tr:gt(0)')
+				for i in trList.items():
+					if int(i.find('td').eq(5).text()[0]) > 2:
+						continue
+					ip = i.find('td').eq(0).text()
+					port = i.find('td').eq(1).text()
+					agreement = i.find('td').eq(3).text()
+					
+					proxies.append(json.dumps({agreement:agreement+'://'+ip+':'+port}))
+		# print(proxies)
+		return proxies
 	
+	def get_proxy_66(self):
+		
+		url = {
+		'http': 'http://www.66ip.cn/nmtq.php?getnum=20&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=%B1%B1%BE%A9&area=1&proxytype=0&api=66ip',
+		'https': 'http://www.66ip.cn/nmtq.php?getnum=20&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=%C9%CF%BA%A3&area=1&proxytype=1&api=66ip'
+		}
+		db = RedisClient()
+		# 返回列表
+		proxies = list()
+		for agreement in ['http','https']:
+			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+			html = get_html(url[agreement], proxy)
+			# 失败重试
+			attemp = 1
+			while html is None and attemp < 3:
+				attemp+=1
+				proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+				html = get_html(url, proxy, True)
+				if html:
+					break
+			# 解析 Html 结构
+			if html:
+				try:
+					doc = pq(html)
+					proxiesList = re.findall(r'(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:\d{2,4})', doc.text())
+					for ipstr in proxiesList:
+						proxies.append(json.dumps({agreement:agreement+'://'+ ipstr}))
+				except Exception as e:
+					set_log_zh('analysis_proxy_66').debug(e)
+					return None
+		# print(proxies)
+		return proxies
 
 
 if __name__ == '__main__':
-	GetProxiesData().get_proxy_xici()
+	# print(GetProxiesData().get_proxy_kuaidaili())
+	print(GetProxiesData().get_proxy_66())
