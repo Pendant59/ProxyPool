@@ -123,8 +123,8 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 
 		#抓取三页
 		for page in range(1,4):
-			# 首页限制 加1秒休眠
-			time.sleep(1)
+			# 首页限制 加2秒休眠
+			time.sleep(random.uniform(1,3))
 			url = 'https://www.kuaidaili.com/free/inha/'+str(page)
 			# 获取一条代理
 			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
