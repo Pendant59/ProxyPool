@@ -4,6 +4,8 @@ import logging.handlers
 from config import HEADERS_LIST,GET_PROXY_TYPE
 import random
 import requests
+import urllib3
+urllib3.disable_warnings()
 
 def get_html(url,proxy,retry=False,**options):
     '''
