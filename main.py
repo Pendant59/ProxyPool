@@ -1,6 +1,7 @@
 from db import RedisClient
 from config import  GET_PROXY_TIMEOUT,POOL_MIN_NUMBER,POOL_MAX_NUMBER,VALID_PROXY_CYCLE,POOL_MAX_LEN_CYCLE,TEST_API
 from getdata import GetProxiesData
+import time
 
 
 
@@ -8,9 +9,12 @@ class DoCheck():
 	""" 检查 """
 	def __init__(self):
 		self._db = RedisClient()
-		pass
 
-		
+	def DoCheck(self):
+		''' 校验代理 '''
+		waitForCheckList = self._db.validateProxiesList()
+		waitForCheckList = [proxy.decode('utf-8') for proxy in waitForCheckList ]
+		print(waitForCheckList)
 
 class DoGrab():
 	""" 抓取入库 """
@@ -44,7 +48,8 @@ class Main():
 	_grab = DoGrab()
 	# 检查代理
 	_check = DoCheck()
-	
+
+
 	@staticmethod
 	def CheckProxies():
 		'''Check whether agents are available'''
@@ -53,12 +58,13 @@ class Main():
 
 
 	@staticmethod
-	def GrabProxies(cycle=POOL_MAX_LEN_CYCLE):
+	def GrabProxies():
 		'''Grabbing proxies'''
 		while True:
-			_grab.DoGrab()
-			time.sleep(cycle)
+			Main._grab.DoGrab()
+			time.sleep(POOL_MAX_LEN_CYCLE)
 
 
 if __name__ == '__main__':
-	Main.GrabProxies()
+	# Main.GrabProxies()
+	# DoCheck().DoCheck()
