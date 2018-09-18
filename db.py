@@ -2,6 +2,7 @@ import redis
 import random
 from functions import set_log
 from config import HOST,PORT,PASSWORD,DB,GET_PROXY_TYPE
+import json
 
 class RedisClient():
 	'''
@@ -32,7 +33,7 @@ class RedisClient():
 
 		try:
 			proxy = self._db.rpop('proxy').decode('utf-8')
-			return proxy
+			return json.loads(proxy)
 		except Exception as e:
 			set_log('db').debug('Get a disposable proxy is error. Please check the ErrorLog.')
 			# print('Get a disposable proxy is error. Please check the ErrorLog.')
@@ -49,7 +50,7 @@ class RedisClient():
 
 		try:
 			proxy = self._db.lindex('proxy', random.randint(0, self.getProxyLength-1)).decode('utf-8')
-			return proxy
+			return json.loads(proxy)
 		except Exception as e:
 			set_log('db').debug('Get proxy whitch is used without deletion is error. Please check the ErrorLog.')
 			# print('Get proxy whitch is used without deletion is error. Please check the ErrorLog.')
