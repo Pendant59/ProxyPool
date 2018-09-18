@@ -5,6 +5,7 @@ from db import RedisClient
 import json
 import re
 
+
 class GetProxiesDataMetaClass(type):
 	'''
 	元类
@@ -22,7 +23,7 @@ class GetProxiesDataMetaClass(type):
 		# 类变量 爬虫方法总个数
 		attrs['funclist'] = [k for k in attrs.keys() if 'get_proxy_' in k]
 		# 类变量 爬虫方法名称集合
-		attrs['funnum'] = len(attrs['funclist'])
+		attrs['funcnum'] = len(attrs['funclist'])
 		# 创建类  不是创建类的实例化对象
 		return type.__new__(cls, base, name, attrs)
 
@@ -79,6 +80,7 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 		# 获取一条代理
 		proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
 		html = get_html(url, proxy)
+		
 		# 失败重试
 		attemp = 1 
 		while html is None and attemp < 3:
