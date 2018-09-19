@@ -29,9 +29,9 @@ def get_html(url,proxy,retry=False,**options):
 
     try:
         if proxy:
-            r = link.get(url, headers=headers, proxies=proxy, timeout=4, verify=False)
+            r = link.get(url, headers=headers, proxies=proxy, timeout=5, verify=False)
         else:
-            r = link.get(url, headers=headers, timeout=4, verify=False)
+            r = link.get(url, headers=headers, timeout=5, verify=False)
         print('Get proxy from', url, r.status_code)
         if r.status_code == requests.codes.ok:
             return r.text
