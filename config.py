@@ -8,8 +8,12 @@ PASSWORD = ''
 # 数据库 0-15
 DB = 0
 
+# 请求相关配置
 # 获取代理的模式 0：取出即删除，1：仅取出
-GET_PROXY_TYPE = 0
+GET_PROXY_TYPE = 1
+
+# 是否使用抓取的代理来请求代理网站，若无代理则默认用真实IP
+USE_GET_PROXY = True
 
 # 获取代理的header
 HEADERS_LIST = [
@@ -21,15 +25,18 @@ HEADERS_LIST = [
 	'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36',
 ]
 
+# 测试代理是否可用的超时时间
+PROXY_TEST_TIMEOUT = 9
 
-# 获得代理测试时间界限
-GET_PROXY_TIMEOUT = 9
+# 请求代理网站的超时时间
+PROXY_REQUEST_TIMEOUT = 6
 
-# 代理池数量界限
+# 代理池相关配置
+# 代理池IP数量界限
 POOL_MIN_NUMBER = 20
-POOL_MAX_NUMBER = 60
+POOL_MAX_NUMBER = 50
 
-# 检查周期
+# 代理池检查周期
 VALID_PROXY_CYCLE = 60
 POOL_MAX_LEN_CHECK_CYCLE = 20
 
