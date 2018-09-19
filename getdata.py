@@ -62,12 +62,13 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 					ip = x.find('td').eq(1).text()
 					port = x.find('td').eq(2).text()
 					agreement = x.find('td').eq(5).text().lower()
-
+					if agreement != 'http': # 只抓取http代理，异步校验只能校验http
+						continue
 					proxies.append(json.dumps({agreement:agreement+'://'+ip+':'+port}))
 				# print(proxies)
 				return proxies
 			except Exception as e:
-				set_log('analysis_proxy_xici').debug(e)
+				set_log_zh_bytime_bytime('analysis_proxy_xici').debug(e)
 				return None
 
 
@@ -106,13 +107,14 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 							ipList.append(v.text())
 					ip =''.join(ipList[:-1])
 					port = ipList[-1]
-					agreement = i.find('td').eq(2).text()
-
+					agreement = i.find('td').eq(2).text().lower()
+					if agreement != 'http': # 只抓取http代理，异步校验只能校验http
+						continue
 					proxies.append(json.dumps({agreement:agreement+'://'+ip+':'+port}))
 				# print(proxies)
 				return proxies
 			except Exception as e:
-				set_log_zh('analysis_proxy_goubanjia').debug(e)
+				set_log_zh_bytime('analysis_proxy_goubanjia').debug(e)
 				return None
 
 	def get_proxy_kuaidaili(self):
@@ -120,14 +122,15 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 		db = RedisClient()
 		# 返回列表
 		proxies = list()
+		# 获取一条代理
+		proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
 
 		#抓取三页
 		for page in range(1,4):
 			# 首页限制 加2秒休眠
 			time.sleep(random.uniform(1,3))
 			url = 'https://www.kuaidaili.com/free/inha/'+str(page)
-			# 获取一条代理
-			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+			
 			html = get_html(url, proxy)
 			# 失败重试
 			attemp = 1
@@ -139,17 +142,20 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 					break
 			# 解析 Html 结构
 			if html:
-				
-				doc = pq(html)
-				trList = doc('#list table tr:gt(0)')
-				for i in trList.items():
-					if int(i.find('td').eq(5).text()[0]) > 2:
-						continue
-					ip = i.find('td').eq(0).text()
-					port = i.find('td').eq(1).text()
-					agreement = i.find('td').eq(3).text()
-					
-					proxies.append(json.dumps({agreement:agreement+'://'+ip+':'+port}))
+				try:
+					doc = pq(html)
+					trList = doc('#list table tr:gt(0)')
+					for i in trList.items():
+						if int(i.find('td').eq(5).text()[0]) > 2:
+							continue
+						ip = i.find('td').eq(0).text()
+						port = i.find('td').eq(1).text()
+						agreement = i.find('td').eq(3).text().lower()
+						if agreement != 'http': # 只抓取http代理，异步校验只能校验http
+							continue
+						proxies.append(json.dumps({agreement:agreement+'://'+ip+':'+port}))
+				except Exception as e:
+					set_log_zh_bytime('analysis_proxy_kuaidaili').debug(e)
 		# print(proxies)
 		return proxies
 	
@@ -157,7 +163,7 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 		
 		url = {
 		'http': 'http://www.66ip.cn/nmtq.php?getnum=20&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=%B1%B1%BE%A9&area=1&proxytype=0&api=66ip',
-		'https': 'http://www.66ip.cn/nmtq.php?getnum=20&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=%C9%CF%BA%A3&area=1&proxytype=1&api=66ip'
+		'https': 'http://www.66ip.cn/nmtq.php?getnum=20&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=%C9%CF%BA%A3&area=1&proxytype=0&api=66ip'
 		}
 		db = RedisClient()
 		# 返回列表
@@ -181,12 +187,13 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 					for ipstr in proxiesList:
 						proxies.append(json.dumps({agreement:agreement+'://'+ ipstr}))
 				except Exception as e:
-					set_log_zh('analysis_proxy_66').debug(e)
+					set_log_zh_bytime('analysis_proxy_66').debug(e)
 					return None
 		# print(proxies)
 		return proxies
 
 
 if __name__ == '__main__':
+	pass
 	# print(GetProxiesData().get_proxy_kuaidaili())
-	print(GetProxiesData().get_proxy_66())
+	# print(GetProxiesData().get_proxy_goubanjia())

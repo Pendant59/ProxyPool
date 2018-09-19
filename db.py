@@ -1,6 +1,6 @@
 import redis
 import random
-from functions import set_log
+from functions import set_log_zh_bytime
 from config import HOST,PORT,PASSWORD,DB,GET_PROXY_TYPE
 import json
 
@@ -17,7 +17,7 @@ class RedisClient():
 				pool = redis.ConnectionPool(host=HOST, password=PASSWORD,port=PORT, db=DB)
 			self._db = redis.Redis(connection_pool=pool)
 		except Exception as e:
-			set_log('db').debug('Redis Content is error. Please check the ErrorLog.')
+			set_log_zh_bytime('db').debug('Redis Content is error. Please check the ErrorLog.')
 			exit()
 
 	
@@ -34,7 +34,7 @@ class RedisClient():
 			proxy = self._db.rpop('proxy').decode('utf-8')
 			return json.loads(proxy)
 		except Exception as e:
-			set_log('db').debug('Get a disposable proxy is error {}'.format(e))
+			set_log_zh_bytime('db').debug('Get a disposable proxy is error {}'.format(e))
 			exit()
 
 	def getProxy(self):
@@ -50,7 +50,7 @@ class RedisClient():
 			proxy = self._db.lindex('proxy', random.randint(0, self.getProxyLength-1)).decode('utf-8')
 			return json.loads(proxy)
 		except Exception as e:
-			set_log('db').debug('Get proxy whitch is used without deletion is error {}'.format(e))
+			set_log_zh_bytime('db').debug('Get proxy whitch is used without deletion is error {}'.format(e))
 			exit()
 
 	def validateProxiesList(self):
