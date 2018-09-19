@@ -42,9 +42,11 @@ class DoCheck():
 								print('insert', proxyStr, '当前队列长度 :', self._db.getProxyLength)
 				# except (asyncio.TimeoutError,aiohttp.client_exceptions.ServerDisconnectedError, aiohttp.client_exceptions.ClientProxyConnectionError, aiohttp.client_exceptions.ClientHttpProxyError) as e:
 				except Exception as e:
-					print('useless proxy', proxyStr)
+					pass
+					# print('Useless Proxy ', proxyStr)
 		except Exception as s:
-			print('aiohttp error',s)
+			pass
+			# print('Aiohttp Error',s)
 		
 
 class DoGrab():
@@ -57,10 +59,10 @@ class DoGrab():
 	def DoGrab(self):
 		''' 抓取 '''
 
-		#代理池数量小于100个，开始抓取
+		# 代理池数量小于POOL_MAX_NUMBER，开始抓取
 		if self._db.getProxyLength < POOL_MAX_NUMBER :
 			for index in range(self._get.funcnum):
-				print('GET Proxies from : ',self._get.funclist[index])
+				print('Get Proxies From Func -> : ',self._get.funclist[index])
 				proxyList = eval('self._get.{}()'.format(self._get.funclist[index]))
 				if proxyList:
 					self._check.DoCheck(proxyList)
@@ -92,7 +94,8 @@ class Main():
 		while True:
 			Main._grab.DoGrab()
 			time.sleep(POOL_MAX_LEN_CHECK_CYCLE)
-
+			
+			
 
 if __name__ == '__main__':
 	Main.GrabProxies()
