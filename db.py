@@ -18,7 +18,6 @@ class RedisClient():
 			self._db = redis.Redis(connection_pool=pool)
 		except Exception as e:
 			set_log('db').debug('Redis Content is error. Please check the ErrorLog.')
-			# print('Redis Content is error. Please check the ErrorLog.')
 			exit()
 
 	
@@ -35,8 +34,7 @@ class RedisClient():
 			proxy = self._db.rpop('proxy').decode('utf-8')
 			return json.loads(proxy)
 		except Exception as e:
-			set_log('db').debug('Get a disposable proxy is error. Please check the ErrorLog.')
-			# print('Get a disposable proxy is error. Please check the ErrorLog.')
+			set_log('db').debug('Get a disposable proxy is error {}'.format(e))
 			exit()
 
 	def getProxy(self):
@@ -52,8 +50,7 @@ class RedisClient():
 			proxy = self._db.lindex('proxy', random.randint(0, self.getProxyLength-1)).decode('utf-8')
 			return json.loads(proxy)
 		except Exception as e:
-			set_log('db').debug('Get proxy whitch is used without deletion is error. Please check the ErrorLog.')
-			# print('Get proxy whitch is used without deletion is error. Please check the ErrorLog.')
+			set_log('db').debug('Get proxy whitch is used without deletion is error {}'.format(e))
 			exit()
 
 	def validateProxiesList(self):
@@ -71,6 +68,7 @@ class RedisClient():
 		'''
 		if value:
 			self._db.rpush('proxy', value)
+		return True
 
 	@property
 	def getProxyLength(self):
