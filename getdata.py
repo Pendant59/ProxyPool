@@ -76,7 +76,6 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 		'''获取goubanjia代理ip'''
 
 		url = 'http://www.goubanjia.com/'
-		# url = 'http://www.google.com'
 		db = RedisClient()
 		# 获取一条代理
 		proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
@@ -162,14 +161,15 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 	def get_proxy_66(self):
 		
 		url = {
-		'http': 'http://www.66ip.cn/nmtq.php?getnum=20&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=%B1%B1%BE%A9&area=1&proxytype=0&api=66ip',
-		'https': 'http://www.66ip.cn/nmtq.php?getnum=20&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=%C9%CF%BA%A3&area=1&proxytype=0&api=66ip'
+		'1': 'http://www.66ip.cn/nmtq.php?getnum=20&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=%B1%B1%BE%A9&area=1&proxytype=0&api=66ip',
+		'2': 'http://www.66ip.cn/nmtq.php?getnum=20&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=%C9%CF%BA%A3&area=1&proxytype=0&api=66ip'
 		}
 		db = RedisClient()
 		# 返回列表
 		proxies = list()
-		for agreement in ['http','https']:
-			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+		# 获取一个代理
+		proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+		for agreement in ['1','2']:
 			html = get_html(url[agreement], proxy)
 			# 失败重试
 			attemp = 1
