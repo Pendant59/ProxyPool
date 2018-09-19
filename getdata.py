@@ -37,14 +37,20 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 		url = 'http://www.xicidaili.com/nn/'
 		# url = 'http://www.google.com'
 		db = RedisClient()
-		# 获取一条代理
-		proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+		# 是否启用抓取的代理来发起请求
+		if USE_GET_PROXY:
+			# 获取一条代理
+			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+
 		html = get_html(url, proxy)
 		# 失败重试
 		attemp = 1 
 		while html is None and attemp <3:
 			attemp+=1
-			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+			# 是否启用抓取的代理来发起请求
+			if USE_GET_PROXY:
+				# 获取一条代理
+				proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
 			html = get_html(url, proxy, True)
 			if html:
 				break
@@ -77,15 +83,20 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 
 		url = 'http://www.goubanjia.com/'
 		db = RedisClient()
-		# 获取一条代理
-		proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+		# 是否启用抓取的代理来发起请求
+		if USE_GET_PROXY:
+			# 获取一条代理
+			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
 		html = get_html(url, proxy)
 		
 		# 失败重试
 		attemp = 1 
 		while html is None and attemp < 3:
 			attemp+=1
-			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+			# 是否启用抓取的代理来发起请求
+			if USE_GET_PROXY:
+				# 获取一条代理
+				proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
 			html = get_html(url, proxy, True)
 			if html:
 				break
@@ -121,8 +132,10 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 		db = RedisClient()
 		# 返回列表
 		proxies = list()
-		# 获取一条代理
-		proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+		# 是否启用抓取的代理来发起请求
+		if USE_GET_PROXY:
+			# 获取一条代理
+			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
 
 		#抓取三页
 		for page in range(1,4):
@@ -135,7 +148,10 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 			attemp = 1
 			while html is None and attemp < 3:
 				attemp+=1
-				proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+				# 是否启用抓取的代理来发起请求
+				if USE_GET_PROXY:
+					# 获取一条代理
+					proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
 				html = get_html(url, proxy, True)
 				if html:
 					break
@@ -167,16 +183,21 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 		db = RedisClient()
 		# 返回列表
 		proxies = list()
-		# 获取一个代理
-		proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
-		for agreement in ['1','2']:
-			html = get_html(url[agreement], proxy)
+		# 是否启用抓取的代理来发起请求
+		if USE_GET_PROXY:
+			# 获取一条代理
+			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+		for index in ['1','2']:
+			html = get_html(url[index], proxy)
 			# 失败重试
 			attemp = 1
 			while html is None and attemp < 3:
 				attemp+=1
-				proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
-				html = get_html(url, proxy, True)
+				# 是否启用抓取的代理来发起请求
+				if USE_GET_PROXY:
+					# 获取一条代理
+					proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+				html = get_html(url[index], proxy, True)
 				if html:
 					break
 			# 解析 Html 结构
@@ -185,7 +206,7 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 					doc = pq(html)
 					proxiesList = re.findall(r'(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:\d{2,4})', doc.text())
 					for ipstr in proxiesList:
-						proxies.append(json.dumps({agreement:agreement+'://'+ ipstr}))
+						proxies.append(json.dumps({'http':'http'+'://'+ ipstr}))
 				except Exception as e:
 					set_log_zh_bytime('analysis_proxy_66').debug(e)
 					return None
@@ -197,3 +218,5 @@ if __name__ == '__main__':
 	pass
 	# print(GetProxiesData().get_proxy_kuaidaili())
 	# print(GetProxiesData().get_proxy_goubanjia())
+	# print(GetProxiesData().get_proxy_66())
+
