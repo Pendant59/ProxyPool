@@ -79,24 +79,32 @@ class Main():
 	_grab = DoGrab()
 	# 检查代理
 	_check = DoCheck()
+	# redis
+	_db = RedisClient()
 
 
 	@staticmethod
 	def CheckProxies():
 		'''Check whether agents are available'''
-		pass
-			
+		while True:
+			print('Check whether agents are available...')
+			waitForCheckList = Main._db.validateProxiesList()
+			if waitForCheckList:
+				Main._check.DoCheck(waitForCheckList)
+			time.sleep(VALID_PROXY_CYCLE)
+
 
 
 	@staticmethod
 	def GrabProxies():
 		'''Grabbing proxies'''
 		while True:
+			print('Grabbing proxies...')
 			Main._grab.DoGrab()
 			time.sleep(POOL_MAX_LEN_CHECK_CYCLE)
 			
 			
 
 if __name__ == '__main__':
-	Main.GrabProxies()
-	# DoCheck().DoCheck()
+	# Main.GrabProxies()
+	Main.CheckProxies()
