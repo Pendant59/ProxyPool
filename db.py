@@ -58,7 +58,11 @@ class RedisClient():
 		获取需要校验的代理列表
 		Get the list of proxys that need to be checked
 		'''
+		# 获取需要校验的ip列表
 		proxies_list = self._db.lrange('proxy', 0, self.getProxyLength // 2)
+		# 重置队列长度
+		self._db.ltrim('proxy',self.getProxyLength // 2 + 1, -1)
+		
 		return proxies_list
 
 	def addProxy(self,value):
