@@ -37,7 +37,7 @@ def get_html(url,proxy,retry=False,**options):
             return r.text
     except Exception as e:
         if not retry:
-            set_log_zh('request_proxy').debug('{}\r\n{}'.format(url,e))
+            set_log_zh_bytime('request_proxy').debug('{}\r\n{}'.format(url,e))
   
 
 
@@ -146,7 +146,7 @@ def set_log_zh_bytime(logname=''):
     file_time_handler.setFormatter(formmater)
     # 设置后缀名称，跟strftime的格式一样
     # file_time_handler.suffix = "%Y-%m-%d_%H-%M-%S.log" #对应 when='S' 格式固定
-    filehandler.suffix = "%Y-%m-%d_%H-%M.log" #对应 when='M' 格式固定
+    file_time_handler.suffix = "%Y-%m-%d_%H-%M.log" #对应 when='M' 格式固定
     
     # 判断handler是否已挂载到Logger对象上，已挂载则直接输出日志，未挂载则先挂载再输出日志
     if not logger.hasHandlers():
