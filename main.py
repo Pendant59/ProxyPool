@@ -1,5 +1,5 @@
 from db import RedisClient
-from config import  GET_PROXY_TIMEOUT,POOL_MIN_NUMBER,POOL_MAX_NUMBER,GET_PROXY_TIMEOUT,VALID_PROXY_CYCLE,POOL_MAX_LEN_CHECK_CYCLE,TEST_API
+from config import  PROXY_TEST_TIMEOUT,POOL_MIN_NUMBER,POOL_MAX_NUMBER,VALID_PROXY_CYCLE,POOL_MAX_LEN_CHECK_CYCLE,TEST_API
 from getdata import GetProxiesData
 import time
 import asyncio
@@ -36,7 +36,7 @@ class DoCheck():
 					proxy = json.loads(proxy)
 					if 'http' in proxy:
 						proxyStr = proxy['http']
-						async with session.get(TEST_API, proxy=proxyStr, timeout=GET_PROXY_TIMEOUT) as response:
+						async with session.get(TEST_API, proxy=proxyStr, timeout=PROXY_TEST_TIMEOUT) as response:
 							if response.status == 200:
 								self._db.addProxy(json.dumps(proxy))
 								print('insert', proxyStr, '当前队列长度 :', self._db.getProxyLength)
@@ -70,6 +70,23 @@ class DoGrab():
 			print('ProxyList is full')
 		return True
 
+	def TestDoGrab(self):
+		'''测试抓取，无校验 '''
+		
+		# 代理池数量小于POOL_MAX_NUMBER，开始抓取
+		if self._db.getProxyLength < POOL_MAX_NUMBER :
+			for index in range(self._get.funcnum):
+				proxyList = eval('self._get.{}()'.format(self._get.funclist[index]))
+				if proxyList:
+				  for proxy in proxyList:
+				  	self._db.addProxy(proxy)
+				  	print('add ', proxy)
+				else:
+					set_log_zh_bytime('Grab proxies').debug('{} is Error'.format(self._get.funclist[index]))
+					continue
+		else:
+			print('ProxyList is full')
+		return True
 
 
 class Main():
@@ -87,11 +104,15 @@ class Main():
 	def CheckProxies():
 		'''Check whether agents are available'''
 		while True:
-			print('Check whether agents are available...')
-			waitForCheckList = Main._db.validateProxiesList()
-			if waitForCheckList:
-				Main._check.DoCheck(waitForCheckList)
+			if Main._db.getProxyLength > POOL_MIN_NUMBER:
+				print('Check whether agents are available...')
+				waitForCheckList = Main._db.validateProxiesList()
+				if waitForCheckList:
+					Main._check.DoCheck(waitForCheckList)
+			else:
+				print("The proxy queue isn't long enough. Please wait for filling...")
 			time.sleep(VALID_PROXY_CYCLE)
+
 
 
 
@@ -106,5 +127,7 @@ class Main():
 			
 
 if __name__ == '__main__':
+	pass
 	# Main.GrabProxies()
-	Main.CheckProxies()
+	# Main.CheckProxies()
+	# DoGrab().TestDoGrab()
