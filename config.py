@@ -23,7 +23,7 @@ HEADERS_LIST = [
 
 
 # 获得代理测试时间界限
-GET_PROXY_TIMEOUT = 6
+GET_PROXY_TIMEOUT = 9
 
 # 代理池数量界限
 POOL_MIN_NUMBER = 20
