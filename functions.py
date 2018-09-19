@@ -7,7 +7,7 @@ import requests
 import urllib3
 urllib3.disable_warnings()
 
-def get_html(url,proxy,retry=False,**options):
+def get_html(url,proxy='',retry=False,**options):
     '''
     获取url的html代码
     url: 目标url
@@ -29,14 +29,15 @@ def get_html(url,proxy,retry=False,**options):
 
     try:
         if proxy:
-            r = link.get(url, headers=headers, proxies=proxy, timeout=5, verify=False)
+            r = link.get(url, headers=headers, proxies=proxy, timeout=6, verify=False)
         else:
-            r = link.get(url, headers=headers, timeout=5, verify=False)
-        print('Get proxy from', url, r.status_code)
+            r = link.get(url, headers=headers, timeout=6, verify=False)
+        print('Get Proxies From Url -> ', url, r.status_code)
         if r.status_code == requests.codes.ok:
             return r.text
     except Exception as e:
-        if not retry:
+        # 重试还失败则记录日志
+        if retry:
             set_log_zh_bytime('request_proxy').debug('{}\r\n{}'.format(url,e))
   
 
