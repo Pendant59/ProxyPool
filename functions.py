@@ -1,7 +1,7 @@
 import time
 import logging
 import logging.handlers
-from config import HEADERS_LIST,GET_PROXY_TYPE
+from config import HEADERS_LIST,GET_PROXY_TYPE,PROXY_REQUEST_TIMEOUT
 import random
 import requests
 import urllib3
@@ -29,9 +29,9 @@ def get_html(url,proxy='',retry=False,**options):
 
     try:
         if proxy:
-            r = link.get(url, headers=headers, proxies=proxy, timeout=6, verify=False)
+            r = link.get(url, headers=headers, proxies=proxy, timeout=PROXY_REQUEST_TIMEOUT, verify=False)
         else:
-            r = link.get(url, headers=headers, timeout=6, verify=False)
+            r = link.get(url, headers=headers, timeout=PROXY_REQUEST_TIMEOUT, verify=False)
         print('Get Proxies From Url -> ', url, r.status_code)
         if r.status_code == requests.codes.ok:
             return r.text
