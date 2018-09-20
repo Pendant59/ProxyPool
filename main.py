@@ -63,7 +63,7 @@ class DoGrab():
 			proxyList = eval('self._get.{}()'.format(self._get.funclist[index]))
 			if proxyList:
 				self._check.DoCheck(proxyList)
-
+	"""
 	def TestDoGrab(self):
 		'''测试抓取，无校验 '''
 		
@@ -80,9 +80,9 @@ class DoGrab():
 					continue
 		else:
 			pass
-			# print('ProxyList is full')
+			
 		return True
-
+	"""
 
 class Main():
 	""" The pool controller """

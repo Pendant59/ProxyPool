@@ -20,12 +20,13 @@ def redis():
 
 @app.route('/')
 def index():
-    return '<h2>Welcome to Proxy Pool System</h2><br>'
+    return '<h2>Welcome to Proxy Pool System</h2><br><ul><li>1.获取带个代理IP:/get</li><li>2.获取代理池当前IP总数：/count</li></ul>'
 
 
 @app.route('/get')
 def getProxy():
     """
+    获取一个代理IP
     Get a proxy
     """
     db = redis()
@@ -38,6 +39,7 @@ def getProxy():
 @app.route('/count')
 def getProxyLength():
     """
+    获取代理池当前IP总数
     Get the count of proxies
     """
     db = redis()
@@ -46,4 +48,5 @@ def getProxyLength():
 
 
 if __name__ == '__main__':
-    app.run()
+    pass
+    # app.run()
