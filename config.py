@@ -10,10 +10,10 @@ DB = 0
 
 # 请求相关配置
 # 获取代理的模式 0：取出即删除，1：仅取出
-GET_PROXY_TYPE = 1
+GET_PROXY_TYPE = 0
 
-# 是否使用抓取的代理来请求代理网站，若无代理则默认用真实IP
-USE_GET_PROXY = True
+# 是否使用抓取的代理来请求代理网站，若无代理则默认用真实IP 0：不用，1：使用
+USE_GET_PROXY = 1
 
 # 获取代理的header
 HEADERS_LIST = [
