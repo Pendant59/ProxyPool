@@ -92,12 +92,13 @@ class RedisClient():
 
 
 if __name__ == '__main__':
-    redis = RedisClient(PORT=6379)
-    if GET_PROXY_TYPE:
-    	proxy = redis.getProxy()
-    else:
-    	proxy = redis.getOnceProxy()
-    print(proxy)   # getOnceProxy()
+	pass
+    # redis = RedisClient(PORT=6379)
+    # if GET_PROXY_TYPE:
+    # 	proxy = redis.getProxy()
+    # else:
+    # 	proxy = redis.getOnceProxy()
+    # print(proxy)   
 
 
 			

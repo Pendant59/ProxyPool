@@ -39,14 +39,10 @@ class DoCheck():
 						async with session.get(TEST_API, proxy=proxyStr, timeout=PROXY_TEST_TIMEOUT) as response:
 							if response.status == 200:
 								self._db.addProxy(json.dumps(proxy))
-								# print('insert', proxyStr, '当前队列长度 :', self._db.getProxyLength)
-				# except (asyncio.TimeoutError,aiohttp.client_exceptions.ServerDisconnectedError, aiohttp.client_exceptions.ClientProxyConnectionError, aiohttp.client_exceptions.ClientHttpProxyError) as e:
 				except Exception as e:
 					pass
-					# print('Useless Proxy ', proxyStr)
 		except Exception as s:
 			pass
-			# print('Aiohttp Error',s)
 		
 
 class DoGrab():
@@ -59,33 +55,12 @@ class DoGrab():
 	def DoGrab(self):
 		''' 抓取 '''
 		for index in range(self._get.funcnum):
-			# print('Get Proxies From Func -> : ',self._get.funclist[index])
 			proxyList = eval('self._get.{}()'.format(self._get.funclist[index]))
 			if proxyList:
 				self._check.DoCheck(proxyList)
-	"""
-	def TestDoGrab(self):
-		'''测试抓取，无校验 '''
-		
-		# 代理池数量小于POOL_MAX_NUMBER，开始抓取
-		if self._db.getProxyLength < POOL_MAX_NUMBER :
-			for index in range(self._get.funcnum):
-				proxyList = eval('self._get.{}()'.format(self._get.funclist[index]))
-				if proxyList:
-				  for proxy in proxyList:
-				  	self._db.addProxy(proxy)
-				  	# print('add ', proxy)
-				else:
-					set_log_zh_bytime('Grab proxies').debug('{} is Error'.format(self._get.funclist[index]))
-					continue
-		else:
-			pass
-			
-		return True
-	"""
 
 class Main():
-	""" The pool controller """
+	""" 主控制器类 """
 
 	# 抓取代理
 	_grab = DoGrab()
@@ -101,7 +76,6 @@ class Main():
 		while True:
 			set_log_zh_bytime('Check_Cycle').debug('开始批量校验,当前队列长度： {}'.format(Main._db.getProxyLength))
 			if Main._db.getProxyLength > POOL_MIN_NUMBER:
-				# print('Check whether agents are available...')
 				waitForCheckList = Main._db.validateProxiesList()
 				set_log_zh_bytime('Check_Cycle').debug('批量校验取值后的队列长度： {}'.format(Main._db.getProxyLength))
 				if waitForCheckList:
@@ -109,7 +83,6 @@ class Main():
 			else:
 				pass
 				set_log_zh_bytime('Check_Cycle').debug('代理数量较少,取消检测,等待填充....')
-				# print("The proxy queue isn't long enough. Please wait for filling...")
 			time.sleep(VALID_PROXY_CYCLE)
 
 
@@ -119,8 +92,6 @@ class Main():
 	def GrabProxies():
 		'''Grabbing proxies'''
 		while True:
-			# print('Grabbing proxies...')
-			# 代理池数量小于POOL_MAX_NUMBER，开始抓取
 			if Main._db.getProxyLength < POOL_MAX_NUMBER :
 				set_log_zh_bytime('Grab_Cycle').debug('开始抓取 当前队列长度： {}'.format(Main._db.getProxyLength))
 				Main._grab.DoGrab()
@@ -135,4 +106,3 @@ if __name__ == '__main__':
 	pass
 	# Main.GrabProxies()
 	# Main.CheckProxies()
-	# DoGrab().TestDoGrab()
