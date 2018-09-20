@@ -11,8 +11,8 @@ def get_html(url,proxy='',retry=False,**options):
     '''
     获取url的html代码
     url: 目标url
-    proxy: 代理ip
-    retry: 是否是重试请求
+    proxy: '' 代理ip
+    retry: False 是否是重试请求
     options: header头其他参数
     '''
    
@@ -42,19 +42,19 @@ def get_html(url,proxy='',retry=False,**options):
   
 
 
-def set_log(logname='', openmethod='a+'):
+def set_log(logname, openmethod='a+'):
     ''' 
     简单记录英文日志
     logname: 日志文件标识
-    openmethod: 日志读写方式
+    openmethod: a+ 日志读写方式
     '''
     # 日志文件路径
-    fileName = './'+ str(time.strftime('%Y%m%d',time.localtime()))+str(logname)+'.log'
+    fileName = './'+ str(time.strftime('%Y%m%d',time.localtime()))+str(logname)+'_dug.log'
     # 日期格式
     dateFormat = "%H:%M:%S %Y-%d-%m %p"
     # 内容格式
     contentFormat = '\r\n [ %(asctime)s ] -%(pathname)s- [ line:%(lineno)d ] -- %(levelname)s -- '
-    contentFormat += '\r\n=|=\r\n %(message)s \r\n=|='
+    contentFormat += '\r\n %(message)s'
     # 一次性基础配置
     logging.basicConfig(level=logging.DEBUG,  
                     format= contentFormat,
@@ -64,11 +64,13 @@ def set_log(logname='', openmethod='a+'):
     return logging
 
 
-def set_log_zh(logname='', openmethod='a+'):
+def set_log_bybytes(logname, maxbytes=1048576, backupCount=1, openmethod='a+'):
     '''
-    记录中文日志
+    记录中文日志-按大小切割
     logname: 日志文件标识
-    openmethod: 日志读写方式
+    maxbytes: 1048576 日志大小 bytes
+    backupCount 1 备份文件个数 
+    openmethod:  a+ 日志读写方式 
     **_**_**
     声明一个 Logger 对象，
     然后指定Logger对象对应的 Handler 为 FileHandler 对象，
@@ -79,15 +81,15 @@ def set_log_zh(logname='', openmethod='a+'):
     '''
 
     # 日志文件路径
-    fileName = './'+ str(time.strftime('%Y%m%d',time.localtime()))+str(logname)+'-zh.log'
+    fileName = './'+ str(time.strftime('%Y%m%d',time.localtime()))+str(logname)+'_zh.log'
     # 日期格式
     dateFormat = "%H:%M:%S %Y-%d-%m %p"
     # 内容格式
     contentFormat = '\r\n [ %(asctime)s ] -%(pathname)s- [ line:%(lineno)d ] -- %(levelname)s -- '
-    contentFormat += '\r\n=|=\r\n %(message)s \r\n=|='
+    contentFormat += '\r\n %(message)s'
 
     # 1.创建 logger对象(记录器)：负责产生日志
-    logger = logging.getLogger('zh') #获得一个logger对象，默认是root
+    logger = logging.getLogger(logname) #获得一个logger对象，默认是root
     
     # 2.设置日志级别
     logger.setLevel(logging.DEBUG)
@@ -96,7 +98,7 @@ def set_log_zh(logname='', openmethod='a+'):
     formmater = logging.Formatter(contentFormat, datefmt=dateFormat)
     
     # 4.创建 Handler对象(处理器)：接收logger传来的日志，然后控制输出
-    handler = logging.FileHandler(fileName,openmethod,encoding='utf-8') 
+    handler = logging.handlers.RotatingFileHandler(fileName, mode=openmethod, maxBytes=1048576, backupCount=1, encoding='utf-8', delay=False)
     
     # 5.为Handler对象绑定Formatter对象，即规定了Handler对象输出日志的格式
     handler.setFormatter(formmater)
@@ -112,11 +114,11 @@ def set_log_zh(logname='', openmethod='a+'):
     
 
 
-def set_log_zh_bytime(logname=''):
+def set_log_zh_bytime(logname):
     '''
     按时间分割记录中文日志
     logname: 日志文件标识
-    **_**_**
+    ** 参数 **
     声明一个 Logger 对象，
     然后指定Logger对象对应的 Handler 为 FileHandler 对象，
     然后 Handler 对象还单独指定了 Formatter 对象单独配置输出格式，
@@ -124,15 +126,15 @@ def set_log_zh_bytime(logname=''):
     然后 即可输出日志
     Formatter->Handler->Logger->Logger.debug()
     '''
-    # logger的初始化工作
-    logger = logging.getLogger('bytime')
+    # logger的初始化工作 根据logname 创建不同的handler 防止日志复写
+    logger = logging.getLogger(logname)
     logger.setLevel(logging.DEBUG)
     # 日志文件路径
-    fileName = './'+ str(time.strftime('%Y%m%d',time.localtime()))+str(logname)+'.log'
+    fileName = './'+ str(time.strftime('%Y%m%d',time.localtime()))+str(logname)+'_byTime.log'
     
      # 内容格式
     contentFormat = '\r\n [ %(asctime)s ] -%(pathname)s- [ line:%(lineno)d ] -- %(levelname)s -- '
-    contentFormat += '\r\n=|=\r\n %(message)s \r\n=|='
+    contentFormat += '\r\n %(message)s'
     # 日期格式
     dateFormat = "%H:%M:%S %Y-%d-%m %p"
 
@@ -142,21 +144,23 @@ def set_log_zh_bytime(logname=''):
     # 添加TimedRotatingFileHandler
     # 定义一个24小时换一次log文件的handler
     # 保留3个旧log文件
-    file_time_handler = logging.handlers.TimedRotatingFileHandler(fileName, when='M', interval=24, backupCount=1,encoding='utf-8')
+    file_time_handler = logging.handlers.TimedRotatingFileHandler(fileName, when='H', interval=1, backupCount=1,encoding='utf-8')
     # 给处理器添加格式
     file_time_handler.setFormatter(formmater)
     # 设置后缀名称，跟strftime的格式一样
     # file_time_handler.suffix = "%Y-%m-%d_%H-%M-%S.log" #对应 when='S' 格式固定
-    file_time_handler.suffix = "%Y-%m-%d_%H-%M.log" #对应 when='M' 格式固定
-    
+    file_time_handler.suffix = "%Y-%m-%d_%H.log" #对应 when='H' 格式固定
+    # print(file_time_handler)
     # 判断handler是否已挂载到Logger对象上，已挂载则直接输出日志，未挂载则先挂载再输出日志
-    if not logger.hasHandlers():
+    if file_time_handler not in logger.handlers:
         logger.addHandler(file_time_handler)
-    
+
     # 返回记录器对象
     return logger
 
 
 if __name__ == '__main__':
     pass
-    # set_log_zh('zh').debug('pendant')
+    # set_log_zh_bytime('test1').debug('pendant1')
+    # set_log_zh_bytime('test2').debug('pendant2')
+    # set_log_zh_bytime('test3').debug('pendant3')
