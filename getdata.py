@@ -1,9 +1,11 @@
 import random
+import json
+import re
+from config import USE_GET_PROXY
 from functions import *
 from pyquery import PyQuery as pq
 from db import RedisClient
-import json
-import re
+
 
 
 class GetProxiesDataMetaClass(type):
@@ -41,7 +43,8 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 		if USE_GET_PROXY:
 			# 获取一条代理
 			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
-
+		else:
+			proxy = None
 		html = get_html(url, proxy)
 		# 失败重试
 		attemp = 1 
@@ -51,6 +54,8 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 			if USE_GET_PROXY:
 				# 获取一条代理
 				proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+			else:
+				proxy = None
 			html = get_html(url, proxy, True)
 			if html:
 				break
@@ -87,6 +92,8 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 		if USE_GET_PROXY:
 			# 获取一条代理
 			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+		else:
+			proxy = None
 		html = get_html(url, proxy)
 		
 		# 失败重试
@@ -97,6 +104,8 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 			if USE_GET_PROXY:
 				# 获取一条代理
 				proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+			else:
+				proxy = None
 			html = get_html(url, proxy, True)
 			if html:
 				break
@@ -136,6 +145,8 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 		if USE_GET_PROXY:
 			# 获取一条代理
 			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+		else:
+			proxy = None
 
 		#抓取三页
 		for page in range(1,4):
@@ -152,6 +163,8 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 				if USE_GET_PROXY:
 					# 获取一条代理
 					proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+				else:
+					proxy = None
 				html = get_html(url, proxy, True)
 				if html:
 					break
@@ -187,6 +200,8 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 		if USE_GET_PROXY:
 			# 获取一条代理
 			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+		else:
+			proxy = None
 		for index in ['1','2']:
 			html = get_html(url[index], proxy)
 			# 失败重试
@@ -197,6 +212,8 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 				if USE_GET_PROXY:
 					# 获取一条代理
 					proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+				else:
+					proxy = None
 				html = get_html(url[index], proxy, True)
 				if html:
 					break
