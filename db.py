@@ -1,8 +1,9 @@
 import redis
 import random
+import json
 from functions import set_log_zh_bytime
 from config import HOST,PORT,PASSWORD,DB,GET_PROXY_TYPE
-import json
+
 
 class RedisClient():
 	'''
