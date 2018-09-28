@@ -1,10 +1,10 @@
 # ProxyPool
 
 #### 项目介绍
-基于Python3.6的自建代理池
-An proxy pool module implemented by Python3.6
-Github 开源地址：https://github.com/Pendant59/ProxyPool
-Gitee 码云开源地址：https://gitee.com/pendant/ProxyPool
+- 基于Python3.6的自建代理池
+- An proxy pool module implemented by Python3.6
+- Github 开源地址：https://github.com/Pendant59/ProxyPool
+- Gitee 码云开源地址：https://gitee.com/pendant/ProxyPool
 
 #### 可能需要自己安装的包/项目需要的包
 - pyquery
@@ -29,6 +29,10 @@ Gitee 码云开源地址：https://gitee.com/pendant/ProxyPool
 - db.py
 	- redis操作模块
 		- class RedisClient 连接以及操作redis，提供代理入库、提取功能
+- bloomfilter.py
+	- 代理去重复模块
+		- class BloomFilter 查重类
+		- class SimpleHash 简单hash函数类
 - functions.py
 	- 函数模块
 - config.py
@@ -39,8 +43,8 @@ Gitee 码云开源地址：https://gitee.com/pendant/ProxyPool
 1. 查看项目配置文件 config.py 修改相关配置
 2. 安装项目需要的包
 3. 安装 redis
-4. 运行 run.py 
-5. 查看日志文件以及redis存储
+4. 运行 run.py
+5. 查看日志文件以及redis存储 代理存储默认是 0库
 
 
 #### 项目参考
