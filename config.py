@@ -7,6 +7,8 @@ PORT = 6379
 PASSWORD = ''
 # 数据库 0-15
 DB = 0
+# Redis bloom filter 去重
+BF_DB = 1
 
 # 请求相关配置
 # 获取代理的模式 0：取出即删除，1：仅取出
