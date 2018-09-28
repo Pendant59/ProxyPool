@@ -6,13 +6,14 @@ from db import RedisClient
 from getdata import GetProxiesData
 from functions import set_log_zh_bytime
 from config import  PROXY_TEST_TIMEOUT,POOL_MIN_NUMBER,POOL_MAX_NUMBER,VALID_PROXY_CYCLE,POOL_MAX_LEN_CHECK_CYCLE,TEST_API
-
+from bloomfilter import BloomFilter
 
 
 class DoCheck():
 	""" 检查 """
 	def __init__(self):
 		self._db = RedisClient()
+		self._bf = BloomFilter()
 
 	def DoCheck(self, proxyList=''):
 		''' 校验代理 '''
@@ -38,7 +39,8 @@ class DoCheck():
 						proxyStr = proxy['http']
 						async with session.get(TEST_API, proxy=proxyStr, timeout=PROXY_TEST_TIMEOUT) as response:
 							if response.status == 200:
-								self._db.addProxy(json.dumps(proxy))
+								if not self._bf.isContains(json.dumps(proxy)):
+									self._db.addProxy(json.dumps(proxy))
 				except Exception as e:
 					pass
 		except Exception as s:
