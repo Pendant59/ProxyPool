@@ -12,6 +12,7 @@ class SimpleHash(object):
         ret = 0
         for i in range(len(value)):
             ret += self.seed * ret + ord(value[i])
+        print((self.cap - 1) & ret)
         return (self.cap - 1) & ret
 
 
@@ -25,7 +26,8 @@ class BloomFilter(object):
         :param key: the key's name in Redis
         """
         self.server = RedisClient(DB=BF_DB)
-        self.bit_size = 1 << 31  # Redis的String类型最大容量为512M，现使用256M  即 2^31(bit) 
+        # self.bit_size = 1 << 31  # Redis的String类型最大容量为512M，现使用256M  即 2^31(bit) 
+        self.bit_size = 602  # Redis的String类型最大容量为512M，现使用0.5M  即602 bits  seeds为7个 当前错误率为百分之一
         self.seeds = [5, 7, 11, 13, 31, 37, 61] 
         self.key = key
         self.blockNum = blockNum
