@@ -51,7 +51,7 @@ def set_log(logname, openmethod='a+'):
     # 日志文件路径
     fileName = './'+ str(time.strftime('%Y%m%d',time.localtime()))+str(logname)+'_dug.log'
     # 日期格式
-    dateFormat = "%H:%M:%S %Y-%d-%m %p"
+    dateFormat = "%H:%M:%S %Y-%m-%d %p"
     # 内容格式
     contentFormat = '\r\n [ %(asctime)s ] -%(pathname)s- [ line:%(lineno)d ] -- %(levelname)s -- '
     contentFormat += '\r\n %(message)s'
@@ -76,7 +76,7 @@ def set_log_bybytes(logname, maxbytes=1048576, backupCount=1, openmethod='a+'):
     # 日志文件路径
     fileName = './'+ str(time.strftime('%Y%m%d',time.localtime()))+str(logname)+'_zh.log'
     # 日期格式
-    dateFormat = "%H:%M:%S %Y-%d-%m %p"
+    dateFormat = "%H:%M:%S %Y-%m-%d %p"
     # 内容格式
     contentFormat = '\r\n [ %(asctime)s ] -%(pathname)s- [ line:%(lineno)d ] -- %(levelname)s -- '
     contentFormat += '\r\n %(message)s'
@@ -111,7 +111,7 @@ def set_log_zh_bytime(logname):
     contentFormat = '\r\n [ %(asctime)s ] -%(pathname)s- [ line:%(lineno)d ] -- %(levelname)s -- '
     contentFormat += '\r\n %(message)s'
     # 日期格式
-    dateFormat = "%H:%M:%S %Y-%d-%m %p"
+    dateFormat = "%H:%M:%S %Y-%m-%d %p"
 
     formmater = logging.Formatter(contentFormat, datefmt=dateFormat)
 
