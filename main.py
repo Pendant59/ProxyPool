@@ -85,7 +85,7 @@ class Main():
 					Main._check.DoCheck(waitForCheckList)
 			else:
 				pass
-				self._bf.flushDb()
+				Main._check._bf.flushDb()
 				set_log_zh_bytime('Check_Cycle').debug('代理数量较少,取消检测,等待填充....')
 			time.sleep(VALID_PROXY_CYCLE)
 
