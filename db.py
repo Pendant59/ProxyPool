@@ -12,7 +12,7 @@ class RedisClient():
 	'''
 	def __init__(self, HOST=HOST, PORT=PORT, PASSWORD=PASSWORD, DB=DB):
 		try:
-			if PASSWORD:
+			if not PASSWORD:
 				pool = redis.ConnectionPool(host=HOST, port=PORT, db=DB)
 			else:
 				pool = redis.ConnectionPool(host=HOST, password=PASSWORD,port=PORT, db=DB)
