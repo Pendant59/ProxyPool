@@ -41,6 +41,7 @@ class DoCheck():
 							if response.status == 200:
 								if not self._bf.isContains(json.dumps(proxy)):
 									self._db.addProxy(json.dumps(proxy))
+									self._bf.insert(json.dumps(proxy))
 				except Exception as e:
 					pass
 		except Exception as s:

@@ -12,7 +12,6 @@ class SimpleHash(object):
         ret = 0
         for i in range(len(value)):
             ret += self.seed * ret + ord(value[i])
-        print((self.cap - 1) & ret)
         return (self.cap - 1) & ret
 
 
