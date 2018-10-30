@@ -55,6 +55,13 @@ class BloomFilter(object):
         for f in self.hashfunc:
             loc = f.hash(str_input)
             self.server._db.setbit(name, loc, 1)
+            
+    def flushDb(self):
+        '''
+        清空当前选择的数据库
+        flush db
+        '''
+        self.server._db.flushdb()
 
 if __name__ == '__main__':
     pass
