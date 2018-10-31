@@ -7,7 +7,9 @@ PORT = 6379
 PASSWORD = ''
 # 数据库 0-15
 DB = 0
-# Redis bloom filter 去重
+# 是否启用 bloomfilter
+USE_BLOOMFILTER = True
+# Redis bloomfilter 去重数据库
 BF_DB = 1
 
 # 请求相关配置
@@ -17,7 +19,7 @@ GET_PROXY_TYPE = 0
 # 是否使用抓取的代理来请求代理网站，0：不用，1：使用。(若代理池为空，则默认用真实IP) 
 USE_GET_PROXY = 1
 
-# 获取代理的header
+# 获取代理的User-Agent
 HEADERS_LIST = [
 	'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/38.0.2125.122 UBrowser/4.0.3214.0 Safari/537.36',
 	'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
@@ -34,12 +36,16 @@ PROXY_TEST_TIMEOUT = 9
 PROXY_REQUEST_TIMEOUT = 6
 
 # 代理池相关配置
-# 代理池IP数量界限
-POOL_MIN_NUMBER = 20
-POOL_MAX_NUMBER = 50
+# 代理池IP数量最小值 并且代理池数量少于该值则清空bloomfilter
+POOL_MIN_NUMBER = 100
+# 代理池IP数量最大值(实际会多出一些，存入部分没有做严格校验)
+POOL_MAX_NUMBER = 1000
+# 代理池数量少于该值 不进行去重
+POOL_UNSET_BLOOMFILTER = 200
 
-# 代理池检查周期
+# 代理有效性检查周期
 VALID_PROXY_CYCLE = 60
+# 代理池长度检查周期
 POOL_MAX_LEN_CHECK_CYCLE = 20
 
 # 测试API，用百度来测试

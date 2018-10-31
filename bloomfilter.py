@@ -26,7 +26,7 @@ class BloomFilter(object):
         """
         self.server = RedisClient(DB=BF_DB)
         # self.bit_size = 1 << 31  # Redis的String类型最大容量为512M，现使用256M  即 2^31(bit) 
-        self.bit_size = 602  # Redis的String类型最大容量为512M，现使用0.5M  即602 bits  seeds为7个 当前错误率为百分之一
+        self.bit_size = 14375  # Redis的String类型最大容量为512M,当前默认 1000个 容错率 1/100
         self.seeds = [5, 7, 11, 13, 31, 37, 61] 
         self.key = key
         self.blockNum = blockNum
@@ -56,12 +56,12 @@ class BloomFilter(object):
             loc = f.hash(str_input)
             self.server._db.setbit(name, loc, 1)
             
-    def flushDb(self):
+    def resetBloomFilter(self):
         '''
-        清空当前选择的数据库
+        清空BloomFilter
         flush db
         '''
-        self.server._db.flushdb()
+        self.server._db.delete('bloomfilter0')
 
 if __name__ == '__main__':
     pass

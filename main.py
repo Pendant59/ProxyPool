@@ -5,7 +5,7 @@ import json
 from db import RedisClient
 from getdata import GetProxiesData
 from functions import set_log_zh_bytime
-from config import  PROXY_TEST_TIMEOUT,POOL_MIN_NUMBER,POOL_MAX_NUMBER,VALID_PROXY_CYCLE,POOL_MAX_LEN_CHECK_CYCLE,TEST_API
+from config import *
 from bloomfilter import BloomFilter
 
 
@@ -39,9 +39,13 @@ class DoCheck():
 						proxyStr = proxy['http']
 						async with session.get(TEST_API, proxy=proxyStr, timeout=PROXY_TEST_TIMEOUT) as response:
 							if response.status == 200:
-								if not self._bf.isContains(json.dumps(proxy)):
+								if USE_BLOOMFILTER:
+									if not self._bf.isContains(json.dumps(proxy)):
+										self._db.addProxy(json.dumps(proxy))
+									if self._db.getProxyLength > POOL_UNSET_BLOOMFILTER:
+										self._bf.insert(json.dumps(proxy))
+								else:
 									self._db.addProxy(json.dumps(proxy))
-									self._bf.insert(json.dumps(proxy))
 				except Exception as e:
 					pass
 		except Exception as s:
@@ -85,7 +89,8 @@ class Main():
 					Main._check.DoCheck(waitForCheckList)
 			else:
 				pass
-				Main._check._bf.flushDb()
+				if USE_BLOOMFILTER:
+					Main._check._bf.resetBloomFilter()
 				set_log_zh_bytime('Check_Cycle').debug('代理数量较少,取消检测,等待填充....')
 			time.sleep(VALID_PROXY_CYCLE)
 

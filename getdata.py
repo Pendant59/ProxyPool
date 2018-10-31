@@ -68,7 +68,7 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 					proxies.append(json.dumps({agreement:agreement+'://'+ip+':'+port}))
 				return proxies
 			except Exception as e:
-				set_log_zh_bytime_bytime('analysis_proxy_xici').debug(e)
+				set_log_zh_bytime('analysis_proxy_xici').debug(e)
 				return None
 
 

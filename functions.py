@@ -32,12 +32,13 @@ def get_html(url,proxy='',retry=False,**options):
             r = link.get(url, headers=headers, proxies=proxy, timeout=PROXY_REQUEST_TIMEOUT, verify=False)
         else:
             r = link.get(url, headers=headers, timeout=PROXY_REQUEST_TIMEOUT, verify=False)
-        print('Get Proxies From Url -> ', url, r.status_code)
+        # print('Get Proxies From Url -> ', url, r.status_code)
         if r.status_code == requests.codes.ok:
             return r.text
     except Exception as e:
-        # 重试还失败则记录日志
-        if retry:
+        pass
+        # 无代理 并且重试还失败则记录日志 - 有代理的情况下多数是代理连接失败
+        if retry and not proxy:
             set_log_zh_bytime('request_proxy').debug('{}\r\n{}'.format(url,e))
   
 
@@ -115,7 +116,7 @@ def set_log_zh_bytime(logname):
 
     formmater = logging.Formatter(contentFormat, datefmt=dateFormat)
 
-    file_time_handler = logging.handlers.TimedRotatingFileHandler(fileName, when='H', interval=1, backupCount=1,encoding='utf-8')
+    file_time_handler = logging.handlers.TimedRotatingFileHandler(fileName, when='H', interval=1, backupCount=6,encoding='utf-8')
     file_time_handler.setFormatter(formmater)
 
     # file_time_handler.suffix = "%Y-%m-%d_%H-%M-%S.log" #对应 when='S' 格式固定
