@@ -116,11 +116,10 @@ def set_log_zh_bytime(logname):
 
     formmater = logging.Formatter(contentFormat, datefmt=dateFormat)
 
-    file_time_handler = logging.handlers.TimedRotatingFileHandler(fileName, when='H', interval=1, backupCount=6,encoding='utf-8')
+    file_time_handler = logging.handlers.TimedRotatingFileHandler(fileName, when='S', interval=5, backupCount=3,encoding='utf-8')
     file_time_handler.setFormatter(formmater)
-
     # file_time_handler.suffix = "%Y-%m-%d_%H-%M-%S.log" #对应 when='S' 格式固定
-    file_time_handler.suffix = "%Y-%m-%d_%H.log" #对应 when='H' 格式固定
+    file_time_handler.suffix = "%Y-%m-%d_%H-%M-%S.log" #对应 when='H' 格式固定
     
     logger.addHandler(file_time_handler)
 
@@ -130,3 +129,4 @@ def set_log_zh_bytime(logname):
 if __name__ == '__main__':
     pass
     
+

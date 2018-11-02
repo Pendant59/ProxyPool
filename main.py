@@ -14,7 +14,7 @@ class DoCheck():
 	def __init__(self):
 		self._db = RedisClient()
 		self._bf = BloomFilter()
-
+		
 	def DoCheck(self, proxyList=''):
 		''' 校验代理 '''
 		if proxyList: # 抓取校验
@@ -26,7 +26,7 @@ class DoCheck():
 			tasks = [self.AsyncCheck(proxy.decode('utf-8')) if isinstance(proxy,bytes) else self.AsyncCheck(proxy) for proxy in waitForCheckList ]
 			loop.run_until_complete(asyncio.wait(tasks))
 		except Exception as e:
-			set_log_zh_bytime('AsyncCheck').debug(e)
+			pass
 		
 
 	async def AsyncCheck(self,proxy):
@@ -75,37 +75,34 @@ class Main():
 	_check = DoCheck()
 	# redis
 	_db = RedisClient()
-
+	# log
+	# _log = {
+	# 		'Check_Cycle': set_log_zh_bytime('Check_Cycle'),
+	# 		'Grab_Cycle': set_log_zh_bytime('Grab_Cycle')
+	# 		}
 
 	@staticmethod
 	def CheckProxies():
 		'''Check whether agents are available'''
 		while True:
-			set_log_zh_bytime('Check_Cycle').debug('开始批量校验,当前队列长度： {}'.format(Main._db.getProxyLength))
+			Main._db._db.set('Check', str(int(time.time())))
 			if Main._db.getProxyLength > POOL_MIN_NUMBER:
 				waitForCheckList = Main._db.validateProxiesList()
-				set_log_zh_bytime('Check_Cycle').debug('批量校验取值后的队列长度： {}'.format(Main._db.getProxyLength))
 				if waitForCheckList:
 					Main._check.DoCheck(waitForCheckList)
 			else:
 				pass
 				if USE_BLOOMFILTER:
 					Main._check._bf.resetBloomFilter()
-				set_log_zh_bytime('Check_Cycle').debug('代理数量较少,取消检测,等待填充....')
 			time.sleep(VALID_PROXY_CYCLE)
-
-
-
 
 	@staticmethod
 	def GrabProxies():
 		'''Grabbing proxies'''
 		while True:
+			Main._db._db.set('Get', str(int(time.time())))
 			if Main._db.getProxyLength < POOL_MAX_NUMBER :
-				set_log_zh_bytime('Grab_Cycle').debug('开始抓取 当前队列长度： {}'.format(Main._db.getProxyLength))
 				Main._grab.DoGrab()
-			else:
-				set_log_zh_bytime('Grab_Cycle').debug('代理池已满,无需抓取,等待空位....')
 			time.sleep(POOL_MAX_LEN_CHECK_CYCLE)
 
 			

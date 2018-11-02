@@ -26,7 +26,7 @@ class BloomFilter(object):
         """
         self.server = RedisClient(DB=BF_DB)
         # self.bit_size = 1 << 31  # Redis的String类型最大容量为512M，现使用256M  即 2^31(bit) 
-        self.bit_size = 14375  # Redis的String类型最大容量为512M,当前默认 1000个 容错率 1/100
+        self.bit_size = 32768  # Redis的String类型最大容量为512M,当前默认 1000个 容错率 1/100
         self.seeds = [5, 7, 11, 13, 31, 37, 61] 
         self.key = key
         self.blockNum = blockNum

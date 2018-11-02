@@ -68,7 +68,7 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 					proxies.append(json.dumps({agreement:agreement+'://'+ip+':'+port}))
 				return proxies
 			except Exception as e:
-				set_log_zh_bytime('analysis_proxy_xici').debug(e)
+				# set_log_zh_bytime('analysis_proxy_xici').debug(e)
 				return None
 
 
@@ -113,7 +113,7 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 					proxies.append(json.dumps({agreement:agreement+'://'+ip+':'+port}))
 				return proxies
 			except Exception as e:
-				set_log_zh_bytime('analysis_proxy_goubanjia').debug(e)
+				# set_log_zh_bytime('analysis_proxy_goubanjia').debug(e)
 				return None
 
 	def get_proxy_kuaidaili(self):
@@ -157,7 +157,8 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 							continue
 						proxies.append(json.dumps({agreement:agreement+'://'+ip+':'+port}))
 				except Exception as e:
-					set_log_zh_bytime('analysis_proxy_kuaidaili').debug(e)
+					# set_log_zh_bytime('analysis_proxy_kuaidaili').debug(e)
+					return None
 		return proxies
 	
 	def get_proxy_66(self):
@@ -194,7 +195,7 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 					for ipstr in proxiesList:
 						proxies.append(json.dumps({'http':'http'+'://'+ ipstr}))
 				except Exception as e:
-					set_log_zh_bytime('analysis_proxy_66').debug(e)
+					# set_log_zh_bytime('analysis_proxy_66').debug(e)
 					return None
 		return proxies
 
