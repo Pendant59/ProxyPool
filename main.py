@@ -99,10 +99,17 @@ class Main():
 	@staticmethod
 	def GrabProxies():
 		'''Grabbing proxies'''
+		i = 0
 		while True:
 			Main._db._db.set('Get', str(int(time.time())))
 			if Main._db.getProxyLength < POOL_MAX_NUMBER :
 				Main._grab.DoGrab()
+			else:
+				if i > 5:
+					Main._db.delProxys()
+					i = 0
+				else:
+					i += 1
 			time.sleep(POOL_MAX_LEN_CHECK_CYCLE)
 
 			

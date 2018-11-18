@@ -14,7 +14,7 @@ BF_DB = 1
 
 # 请求相关配置
 # 获取代理的模式 0：取出即删除，1：仅取出
-GET_PROXY_TYPE = 0
+GET_PROXY_TYPE = 1
 
 # 是否使用抓取的代理来请求代理网站，0：不用，1：使用。(若代理池为空，则默认用真实IP) 
 USE_GET_PROXY = 1
@@ -37,11 +37,11 @@ PROXY_REQUEST_TIMEOUT = 6
 
 # 代理池相关配置
 # 代理池IP数量最小值 并且代理池数量少于该值则清空bloomfilter
-POOL_MIN_NUMBER = 200
+POOL_MIN_NUMBER = 100
 # 代理池IP数量最大值(实际会多出一些，存入部分没有做严格校验)
-POOL_MAX_NUMBER = 1000
+POOL_MAX_NUMBER = 300
 # 代理池数量少于该值 不进行去重(因为异步校验每次都会使当前队列减半，有可能会是当前值的双倍才不去重)
-POOL_UNSET_BLOOMFILTER = 200
+POOL_UNSET_BLOOMFILTER = 100
 
 # 代理有效性检查周期
 VALID_PROXY_CYCLE = 60
