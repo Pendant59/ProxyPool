@@ -1,6 +1,7 @@
 import redis
 import random
 import json
+import time
 from functions import set_log_zh_bytime
 from config import HOST,PORT,PASSWORD,DB,GET_PROXY_TYPE,POOL_HEAL_NUMBER,POOL_CRITICAL_NUMBER
 
