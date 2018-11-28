@@ -142,5 +142,5 @@ class Main():
 
 if __name__ == '__main__':
 	pass
-	Main.GrabProxies()
+	# Main.GrabProxies()
 	# Main.CheckProxies()
