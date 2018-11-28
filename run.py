@@ -14,5 +14,5 @@ def api():
 if __name__ == '__main__':
 	# 抓取和检测
 	run()
-	# 提供proxy的接口
-	api()
+	# 提供proxy的接口 - 如果从当前服务器redis中直接获取 则该方法可注释
+	# api()
