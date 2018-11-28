@@ -126,9 +126,9 @@ class Main():
 		while True:
 			Main._db._db.set('Get', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 			if Main._db.getProxyLength < POOL_MAX_NUMBER:
-				Main._grab.DoGrab()
 				if Main._db.getProxyLength > POOL_HEAL_NUMBER:
 					Main._db.delProxys()
+				Main._grab.DoGrab()
 			else:
 				if i > 3:
 					Main._db.delProxys()
@@ -142,5 +142,5 @@ class Main():
 
 if __name__ == '__main__':
 	pass
-	# Main.GrabProxies()
+	Main.GrabProxies()
 	# Main.CheckProxies()
