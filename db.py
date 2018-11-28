@@ -2,7 +2,7 @@ import redis
 import random
 import json
 from functions import set_log_zh_bytime
-from config import HOST,PORT,PASSWORD,DB,GET_PROXY_TYPE,POOL_MIN_NUMBER
+from config import HOST,PORT,PASSWORD,DB,GET_PROXY_TYPE,POOL_HEAL_NUMBER,POOL_CRITICAL_NUMBER
 
 
 class RedisClient():
@@ -79,8 +79,10 @@ class RedisClient():
 		'''
 		删除一定数量的代理ip
 		'''
-		if self.getProxyLength > POOL_MIN_NUMBER:
-			self._db.ltrim('proxy',self.getProxyLength // 2 + 1, -1)
+		if self.getProxyLength > POOL_CRITICAL_NUMBER:
+			length = random.randint(3,6)
+			self._db.ltrim('proxy', self.getProxyLength // length + 1, -1)
+			self._db.set('DelProxys', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 		return None
 
 	@property
@@ -101,7 +103,7 @@ class RedisClient():
 
 if __name__ == '__main__':
 	pass
-    # redis = RedisClient(PORT=6379)
+	# redis = RedisClient(PORT=6379)
     # if GET_PROXY_TYPE:
     # 	proxy = redis.getProxy()
     # else:

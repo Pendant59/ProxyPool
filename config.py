@@ -36,10 +36,12 @@ PROXY_TEST_TIMEOUT = 9
 PROXY_REQUEST_TIMEOUT = 6
 
 # 代理池相关配置
-# 代理池IP数量最小值 并且代理池数量少于该值则清空bloomfilter
-POOL_MIN_NUMBER = 200
+# 代理池IP数量健康值 并且代理池数量少于该值则清空bloomfilter
+POOL_HEAL_NUMBER = 150
 # 代理池IP数量最大值(实际会多出一些，存入部分没有做严格校验)
 POOL_MAX_NUMBER = 300
+# 代理池IP数量临界值 小于等于该值则不进行截断删除
+POOL_CRITICAL_NUMBER = 30
 
 
 # 代理有效性检查周期
