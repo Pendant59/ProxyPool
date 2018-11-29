@@ -22,7 +22,7 @@ class DoCheck():
 			waitForCheckList = proxyList
 			try:
 				loop = asyncio.get_event_loop()
-				tasks = [self.AsyncCheck(proxy.decode('utf-8')) if isinstance(proxy,bytes) else self.AsyncCheckNew(proxy) for proxy in waitForCheckList ]
+				tasks = [self.AsyncCheckNew(proxy.decode('utf-8')) if isinstance(proxy,bytes) else self.AsyncCheckNew(proxy) for proxy in waitForCheckList ]
 				loop.run_until_complete(asyncio.wait(tasks))
 			except Exception as e:
 				pass
@@ -30,7 +30,7 @@ class DoCheck():
 			waitForCheckList = self._db.validateProxiesList()
 			try:
 				loop = asyncio.get_event_loop()
-				tasks = [self.AsyncCheck(proxy.decode('utf-8')) if isinstance(proxy,bytes) else self.AsyncCheckOld(proxy) for proxy in waitForCheckList ]
+				tasks = [self.AsyncCheckOld(proxy.decode('utf-8')) if isinstance(proxy,bytes) else self.AsyncCheckOld(proxy) for proxy in waitForCheckList ]
 				loop.run_until_complete(asyncio.wait(tasks))
 			except Exception as e:
 				pass
@@ -48,7 +48,7 @@ class DoCheck():
 								if USE_BLOOMFILTER:
 									if not self._bf.isContains(json.dumps(proxy)):
 										self._db.addProxy(json.dumps(proxy))
-									if self._db.getProxyLength > POOL_HEAL_NUMBER:
+									if self._db.getProxyLength > POOL_CRITICAL_NUMBER:
 										self._bf.insert(json.dumps(proxy))
 								else:
 									self._db.addProxy(json.dumps(proxy))
@@ -108,7 +108,7 @@ class Main():
 		'''Check whether agents are available'''
 		while True:
 			Main._db._db.set('Check', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-			if Main._db.getProxyLength > POOL_HEAL_NUMBER:
+			if Main._db.getProxyLength > POOL_CRITICAL_NUMBER:
 				waitForCheckList = Main._db.validateProxiesList()
 				if waitForCheckList:
 					Main._check.DoCheck(waitForCheckList)
