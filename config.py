@@ -25,7 +25,6 @@ HEADERS_LIST = [
 	'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.71 Safari/537.36',
 	'Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0',
 	'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36',
-	'Mozilla/5.0 (WindowsNT6.1;rv:2.0.1)Gecko/20100101Firefox/4.0.1',
 	'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36',
 ]
 
@@ -36,11 +35,14 @@ PROXY_TEST_TIMEOUT = 9
 PROXY_REQUEST_TIMEOUT = 6
 
 # 代理池相关配置
-# 代理池IP数量健康值 并且代理池数量少于该值则清空bloomfilter
-POOL_HEAL_NUMBER = 100
+
+# 代理池IP数量健康值 大于该值 则进行随机截断删除 最小截断1/3 
+# 增大该值也需要同步增大 POOL_CRITICAL_NUMBER 以确保 bloomfilter 可以被清空
+# (如果bloomfilter分配的内存足够大，通过你的计算，去重条数和误差能让你满意，可以不同步增大 POOL_CRITICAL_NUMBER)
+POOL_HEAL_NUMBER = 60
 # 代理池IP数量最大值(实际会多出一些，存入部分没有做严格校验)
 POOL_MAX_NUMBER = 300
-# 代理池IP数量临界值 小于等于该值则不进行截断删除
+# 代理池IP数量临界值 小于等于该值则不进行截断删除 并且清空bloomfilter
 POOL_CRITICAL_NUMBER = 30
 
 
