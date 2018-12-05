@@ -34,6 +34,7 @@ def get_html(url,proxy='',retry=False,**options):
             r = link.get(url, headers=headers, timeout=PROXY_REQUEST_TIMEOUT, verify=False)
         # print('Get Proxies From Url -> ', url, r.status_code)
         if r.status_code == requests.codes.ok:
+            r.encoding='utf-8'
             return r.text
     except Exception as e:
         pass

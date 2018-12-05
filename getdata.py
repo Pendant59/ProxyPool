@@ -58,7 +58,7 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 				trList = doc('#ip_list tr:gt(0)')
 				for x in trList.items():
 					delay = x.find('td').eq(6).find("div").attr('title')[0]
-					if int(delay) > 0 :
+					if int(float(delay)) >= 1 :
 						continue
 					ip = x.find('td').eq(1).text()
 					port = x.find('td').eq(2).text()
@@ -148,7 +148,7 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 					doc = pq(html)
 					trList = doc('#list table tr:gt(0)')
 					for i in trList.items():
-						if int(i.find('td').eq(5).text()[0]) > 2:
+						if int(float(i.find('td').eq(5).text()[0])) >= 2:
 							continue
 						ip = i.find('td').eq(0).text()
 						port = i.find('td').eq(1).text()
@@ -161,12 +161,9 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 					return None
 		return proxies
 	
-	def get_proxy_66(self):
+	def get_proxy_seofangfa(self):
 		
-		url = {
-		'1': 'http://www.66ip.cn/nmtq.php?getnum=20&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=%B1%B1%BE%A9&area=1&proxytype=0&api=66ip',
-		'2': 'http://www.66ip.cn/nmtq.php?getnum=20&isp=0&anonymoustype=3&start=&ports=&export=&ipaddress=%C9%CF%BA%A3&area=1&proxytype=0&api=66ip'
-		}
+		url = 'http://ip.seofangfa.com/';
 		db = RedisClient()
 		proxies = list()
 
@@ -174,29 +171,37 @@ class GetProxiesData(metaclass=GetProxiesDataMetaClass):
 			proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
 		else:
 			proxy = None
-		for index in ['1','2']:
-			html = get_html(url[index], proxy)
+	
+		html = get_html(url, proxy)
 
-			attemp = 1
-			while html is None and attemp < 3:
-				attemp+=1
-				if USE_GET_PROXY:
-					proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
-				else:
-					proxy = None
-				html = get_html(url[index], proxy, True)
-				if html:
-					break
-					
+		attemp = 1
+		while html is None and attemp < 3:
+			attemp+=1
+			if USE_GET_PROXY:
+				proxy = db.getOnceProxy() if GET_PROXY_TYPE is 0 else db.getProxy()
+			else:
+				proxy = None
+			html = get_html(url, proxy, True)
 			if html:
-				try:
-					doc = pq(html)
-					proxiesList = re.findall(r'(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:\d{2,4})', doc.text())
-					for ipstr in proxiesList:
-						proxies.append(json.dumps({'http':'http'+'://'+ ipstr}))
-				except Exception as e:
-					# set_log_zh_bytime('analysis_proxy_66').debug(e)
-					return None
+				break
+		
+		if html:
+			try:
+				doc = pq(html)
+				trList = doc('.table tr:gt(0)')
+				for x in trList.items():
+					delay = x.find('td').eq(2).text()
+					if int(float(delay)) >= 1:
+						continue
+					# 移除国外代理
+					location = x.find('td').eq(3).text()
+					if 'CN' not in location and 'X' in location:
+						continue
+					ip = x.find('td').eq(0).text()
+					port = x.find('td').eq(1).text()
+					proxies.append(json.dumps({'http':'http'+'://'+ip+':'+port}))
+			except Exception as e:
+				return None
 		return proxies
 
 
@@ -204,5 +209,5 @@ if __name__ == '__main__':
 	pass
 	# print(GetProxiesData().get_proxy_kuaidaili())
 	# print(GetProxiesData().get_proxy_goubanjia())
-	# print(GetProxiesData().get_proxy_66())
+	# print(GetProxiesData().get_proxy_seofangfa())
 
