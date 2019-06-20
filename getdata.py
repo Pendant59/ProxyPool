@@ -210,4 +210,5 @@ if __name__ == '__main__':
 	# print(GetProxiesData().get_proxy_kuaidaili())
 	# print(GetProxiesData().get_proxy_goubanjia())
 	# print(GetProxiesData().get_proxy_seofangfa())
+	# print(GetProxiesData().get_proxy_xici())
 

@@ -43,7 +43,7 @@ POOL_HEAL_NUMBER = 60
 # 代理池IP数量最大值(实际会多出一些，存入部分没有做严格校验)
 POOL_MAX_NUMBER = 300
 # 代理池IP数量临界值 小于等于该值则不进行截断删除 并且清空bloomfilter
-POOL_CRITICAL_NUMBER = 30
+POOL_CRITICAL_NUMBER = 50
 
 
 # 代理有效性检查周期
