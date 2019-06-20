@@ -48,7 +48,7 @@ class DoCheck():
 								if USE_BLOOMFILTER:
 									if not self._bf.isContains(json.dumps(proxy)):
 										self._db.addProxy(json.dumps(proxy))
-									if self._db.getProxyLength > POOL_CRITICAL_NUMBER:
+									# if self._db.getProxyLength > POOL_CRITICAL_NUMBER:
 										self._bf.insert(json.dumps(proxy))
 								else:
 									self._db.addProxy(json.dumps(proxy))
