@@ -33,7 +33,7 @@ class RedisClient():
 			return None
 
 		try:
-			proxy = self._db.rpop('proxy').decode('utf-8')
+			proxy = self._db.rpop('Proxy:Proxy').decode('utf-8')
 			return json.loads(proxy)
 		except Exception as e:
 			set_log_zh_bytime('db').debug('Get a disposable proxy is error {}'.format(e))
@@ -49,7 +49,7 @@ class RedisClient():
 			return None
 
 		try:
-			proxy = self._db.lindex('proxy', random.randint(0, self.getProxyLength-1)).decode('utf-8')
+			proxy = self._db.lindex('Proxy:Proxy', random.randint(0, self.getProxyLength-1)).decode('utf-8')
 			return json.loads(proxy)
 		except Exception as e:
 			set_log_zh_bytime('db').debug('Get proxy whitch is used without deletion is error {}'.format(e))
@@ -61,9 +61,9 @@ class RedisClient():
 		Get the list of proxys that need to be checked
 		'''
 		# 获取需要校验的ip列表
-		proxies_list = self._db.lrange('proxy', 0, self.getProxyLength // 2)
+		proxies_list = self._db.lrange('Proxy:Proxy', 0, self.getProxyLength // 2)
 		# 重置队列长度
-		self._db.ltrim('proxy',self.getProxyLength // 2 + 1, -1)
+		self._db.ltrim('Proxy:Proxy',self.getProxyLength // 2 + 1, -1)
 		
 		return proxies_list
 
@@ -73,7 +73,7 @@ class RedisClient():
 		add proxy
 		'''
 		if value:
-			self._db.rpush('proxy', value)
+			self._db.rpush('Proxy:Proxy', value)
 		return True
 
 	def delProxys(self):
@@ -82,8 +82,8 @@ class RedisClient():
 		'''
 		if self.getProxyLength > POOL_CRITICAL_NUMBER:
 			length = random.randint(3,6)
-			self._db.ltrim('proxy', self.getProxyLength // length + 1, -1)
-			self._db.set('DelProxys', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+			self._db.ltrim('Proxy:Proxy', self.getProxyLength // length + 1, -1)
+			self._db.set('Proxy:DelProxys', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 		return None
 
 	@property
@@ -92,7 +92,7 @@ class RedisClient():
 		获取代理队列长度
 		Get proxy queue length
 		'''
-		return self._db.llen('proxy')
+		return self._db.llen('Proxy:Proxy')
 	
 	def flushDb(self):
 		'''

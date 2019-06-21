@@ -40,7 +40,7 @@
 
 #### 使用说明
 
-1. 查看项目配置文件 config.py 修改相关配置
+1. 复制一份config.env 名称改为 config.py，作为项目配置文件，查看说明注释 config.py 修改相关配置
 2. 安装项目需要的包
 3. 安装 redis
 4. 运行 run.py

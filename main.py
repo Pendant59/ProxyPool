@@ -107,7 +107,7 @@ class Main():
 	def CheckProxies():
 		'''Check whether agents are available'''
 		while True:
-			Main._db._db.set('Check', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+			Main._db._db.set('Proxy:Check', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 			if Main._db.getProxyLength > POOL_CRITICAL_NUMBER:
 				waitForCheckList = Main._db.validateProxiesList()
 				if waitForCheckList:
@@ -116,7 +116,7 @@ class Main():
 				pass
 				if USE_BLOOMFILTER:
 					Main._check._bf.resetBloomFilter()
-					Main._db._db.set('ResetBF', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+					Main._db._db.set('Proxy:ResetBF', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 			time.sleep(VALID_PROXY_CYCLE)
 
 	@staticmethod
@@ -124,7 +124,7 @@ class Main():
 		'''Grabbing proxies'''
 		i = 0
 		while True:
-			Main._db._db.set('Get', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+			Main._db._db.set('Proxy:Get', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 			if Main._db.getProxyLength < POOL_MAX_NUMBER:
 				if Main._db.getProxyLength > POOL_HEAL_NUMBER:
 					Main._db.delProxys()
